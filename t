@@ -1,10 +1,8 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-Func = function()
-    KillSwitch = true
-    CleanUpScript(true)
-    print("JDRS: script has been unloaded")
-end
+KillSwitch = true
+CleanUpScript(true)
+print("JDRS: script has been unloaded")
 
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
