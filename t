@@ -6666,11 +6666,12 @@ if IsDungeon then
             local Success, Result = pcall(function()
                 repeat
                     ProfilerGui:SetText(string.format(
-                        "Account: %*\nClass: %*\nGold %*\nCrystals: %*\nGuild: %*",
+                        "Account: %*\nClass: %*\nGold %*\nLevel: %*\nGuild: %*",
                         LocalPlayer.Name.. " ("..LocalPlayer.DisplayName..")",
                         ClassSkills[SV.PlayerClass].DisplayName,
                         FormatNumber(Gold.Value),
-                        FormatNumber(Remotes.Crystals_GetCrystals:InvokeServer()),
+                        ISV.PlayerLevel,
+                        -- FormatNumber(Remotes.Crystals_GetCrystals:InvokeServer()),
                         GetGuild(LocalPlayer)
                     ))
                     task.wait(5)
