@@ -3096,7 +3096,7 @@ end
 
 SetGlobal("getting obsidian Library")
 if SV.BadExecutor then
-    Library = SaveScriptToFiles("https://raw.githubusercontent.com/justdoingrandomstuff/old_obsidian_library/main/old_library", "L", 1)
+    Library = SaveScriptToFiles("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/oldlibrary", "L", 1)
 else
     Library = SaveScriptToFiles("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua", "L", 1)
 end
@@ -3110,7 +3110,7 @@ local Window = Library:CreateWindow({
     Footer = "Script made by: justdoingrandomstuff!",
     Icon = 17210785932,
     NotifySide = "Right",
-    AutoShow = true,
+    AutoShow = false,
     ShowCustomCursor = false,
     ToggleKeybind = Enum.KeyCode.Zero,
     EnableCompacting = true
