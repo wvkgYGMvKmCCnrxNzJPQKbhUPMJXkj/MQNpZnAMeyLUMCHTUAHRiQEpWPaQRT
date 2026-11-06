@@ -1,4 +1,6 @@
-if not game:IsLoaded() then game.Loaded:Wait(5) end
+task.wait(3)
+
+if not game:IsLoaded() then game.Loaded:Wait() end
 
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
@@ -493,7 +495,7 @@ SetGlobal("setting up auto execute")
 if EF.Queue then
     local FileName = "JDRS/AutoExecute"
     if isfile(FileName) then
-        EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/justdoingrandomstuff/World-Zero/main/autofarm"))()]])
+        EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
         SV.AlreadyQueued = true
     end
 end
@@ -6965,7 +6967,7 @@ Toggles.AutoScriptToggle:OnChanged(function(ChangedValue) -- inject script
         end
         if not SV.AlreadyQueued then
             if EF.Queue then
-                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/justdoingrandomstuff/World-Zero/main/autofarm"))()]])
+                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
             end
         end
     else
