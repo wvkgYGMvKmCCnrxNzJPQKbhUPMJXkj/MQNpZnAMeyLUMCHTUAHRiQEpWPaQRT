@@ -1,6 +1,4 @@
-task.wait(5) -- delay 5 seconds before starting the whole script
-
-if not game:IsLoaded() then game.Loaded:Wait() end
+if not game:IsLoaded() then game.Loaded:Wait(5) end
 
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
@@ -20,7 +18,7 @@ do
         task.spawn(function()
             repeat
                 print(_G.ScriptStep)
-                task.wait(5)
+                task.wait(1)
             until _G.ScriptStep == "end"
             print("loaded everything")
         end)
