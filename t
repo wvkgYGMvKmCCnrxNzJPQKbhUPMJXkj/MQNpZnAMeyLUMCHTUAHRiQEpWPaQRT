@@ -453,7 +453,7 @@ local HoldForRealTime
 local RestartAtFloor = 275
 local CurrentMob
 local IsMobCamera
-local KillSwitch
+local KillSwitch = false
 local KeepTier = 5
 local SellItemCheck = 0
 local OffsetMax = 0
