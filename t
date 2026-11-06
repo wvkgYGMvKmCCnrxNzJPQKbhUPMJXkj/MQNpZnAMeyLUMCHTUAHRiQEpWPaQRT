@@ -1,13 +1,5 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-if EF.Queue then
-    local FileName = "JDRS/AutoExecute"
-    if isfile(FileName) then
-        delfile(FileName)
-        EF.ClearQueue()
-    end
-end
-
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
     game:Shutdown()
@@ -494,6 +486,14 @@ do
     end
     if PlayerCharacter and PlayerCharacter:FindFirstChild("Collider") then
         PlayerCollider = PlayerCharacter.Collider
+    end
+end
+
+if EF.Queue then
+    local FileName = "JDRS/AutoExecute"
+    if isfile(FileName) then
+        delfile(FileName)
+        EF.ClearQueue()
     end
 end
 
