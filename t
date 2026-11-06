@@ -1598,12 +1598,12 @@ local function RejoinLastDungeon(DoRejoin)
     end
 end
 
-SetGlobal("wait for game crash")
-do
-    CoreGui:WaitForChild("RobloxPromptGui", math.huge):WaitForChild("promptOverlay", math.huge).ChildAdded:Once(function()
-        RejoinLastDungeon(true)
-    end)
-end
+-- SetGlobal("wait for game crash")
+-- do
+--     CoreGui:WaitForChild("RobloxPromptGui", math.huge):WaitForChild("promptOverlay", math.huge).ChildAdded:Once(function()
+--         RejoinLastDungeon(true)
+--     end)
+-- end
 
 SetGlobal("restart dungeon")
 local function RestartDungeon(RestartBypass)
@@ -1620,7 +1620,7 @@ local function RestartDungeon(RestartBypass)
         return
     end
     Library:Notify("Teleporting...", SV.RestartDungeonDelay)
-    -- KillSwitch = true
+    KillSwitch = true
     task.wait(SV.RestartDungeonDelay)
     if IsTower then
         Difficulty = nil
