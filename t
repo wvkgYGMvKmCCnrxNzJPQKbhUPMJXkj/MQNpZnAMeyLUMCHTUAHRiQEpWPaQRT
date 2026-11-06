@@ -489,14 +489,6 @@ do
     end
 end
 
-if EF.Queue then
-    local FileName = "JDRS/AutoExecute"
-    if isfile(FileName) then
-        delfile(FileName)
-        EF.ClearQueue()
-    end
-end
-
 SetGlobal("setting up auto execute")
 if EF.Queue then
     local FileName = "JDRS/AutoExecute"
@@ -1628,7 +1620,7 @@ local function RestartDungeon(RestartBypass)
         return
     end
     Library:Notify("Teleporting...", SV.RestartDungeonDelay)
-    KillSwitch = true
+    -- KillSwitch = true
     task.wait(SV.RestartDungeonDelay)
     if IsTower then
         Difficulty = nil
