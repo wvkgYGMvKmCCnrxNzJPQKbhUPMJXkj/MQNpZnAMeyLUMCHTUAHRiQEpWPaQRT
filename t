@@ -1,5 +1,3 @@
-task.wait(5)
-
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 -- || CHECK IF IN WORLD ZERO ||
@@ -492,6 +490,7 @@ do
 end
 
 SetGlobal("setting up auto execute")
+task.wait(3)
 if EF.Queue then
     local FileName = "JDRS/AutoExecute"
     if isfile(FileName) then
