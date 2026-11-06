@@ -1,7 +1,7 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-KillSwitch = true
-CleanUpScript(true)
+KillSwitch = false
+CleanUpScript(false)
 
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
