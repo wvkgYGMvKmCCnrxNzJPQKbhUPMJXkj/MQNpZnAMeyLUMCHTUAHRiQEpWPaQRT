@@ -1,6 +1,6 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-delfile(FileName)
+delfile("JDRS/AutoExecute")
 EF.ClearQueue()
 
 -- || CHECK IF IN WORLD ZERO ||
