@@ -496,6 +496,7 @@ if EF.Queue then
     if isfile(FileName) then
         EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
         SV.AlreadyQueued = true
+        task.wait(1)
     end
 end
 
