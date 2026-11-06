@@ -15,7 +15,7 @@ _G.ScriptRunning = true -- prevent script from being loaded twice
 local ScriptLoadingStart = os.clock()
 -- || CHECK STEP || - turn on to see scripts loading progress
 do
-    local TrackProgress = true
+    local TrackProgress = false
     if TrackProgress then
         task.spawn(function()
             repeat
