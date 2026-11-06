@@ -450,10 +450,10 @@ local Xdistance = 0
 local Ydistance = 0
 local TempStop
 local HoldForRealTime
-local RestartAtFloor = 275
+local RestartAtFloor = 200
 local CurrentMob
 local IsMobCamera
-local KillSwitch = false
+local KillSwitch
 local KeepTier = 5
 local SellItemCheck = 0
 local OffsetMax = 0
@@ -490,13 +490,11 @@ do
 end
 
 SetGlobal("setting up auto execute")
-task.wait(3)
 if EF.Queue then
     local FileName = "JDRS/AutoExecute"
     if isfile(FileName) then
-        EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
+        EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/justdoingrandomstuff/World-Zero/main/autofarm"))()]])
         SV.AlreadyQueued = true
-        task.wait(1)
     end
 end
 
@@ -3097,7 +3095,7 @@ end
 
 SetGlobal("getting obsidian Library")
 if SV.BadExecutor then
-    Library = SaveScriptToFiles("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/oldlibrary", "L", 1)
+    Library = SaveScriptToFiles("https://raw.githubusercontent.com/justdoingrandomstuff/old_obsidian_library/main/old_library", "L", 1)
 else
     Library = SaveScriptToFiles("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua", "L", 1)
 end
@@ -3108,10 +3106,10 @@ Toggles = Library.Toggles
 SetGlobal("creating window")
 local Window = Library:CreateWindow({
     Title = "World Zero",
-    Footer = "Script made by: justdoingrandomstuff!",
+    Footer = "Script made by: justdoingrandomstuff",
     Icon = 17210785932,
     NotifySide = "Right",
-    AutoShow = false,
+    AutoShow = true,
     ShowCustomCursor = false,
     ToggleKeybind = Enum.KeyCode.Zero,
     EnableCompacting = true
@@ -6967,19 +6965,11 @@ Toggles.AutoScriptToggle:OnChanged(function(ChangedValue) -- inject script
         end
         if not SV.AlreadyQueued then
             if EF.Queue then
-                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
+                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/justdoingrandomstuff/World-Zero/main/autofarm"))()]])
             end
         end
     else
-        if not isfile(FileName) then
-            writefile(FileName, "")
-        end
-        if not SV.AlreadyQueued then
-            if EF.Queue then
-                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
-            end
-        end
-        -- EF.ClearQueue()
+        EF.ClearQueue()
     end
 end)
 end -- for unloaded config tab
