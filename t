@@ -450,7 +450,7 @@ local Xdistance = 0
 local Ydistance = 0
 local TempStop
 local HoldForRealTime
-local RestartAtFloor = 200
+local RestartAtFloor = 275
 local CurrentMob
 local IsMobCamera
 local KillSwitch
@@ -6971,6 +6971,14 @@ Toggles.AutoScriptToggle:OnChanged(function(ChangedValue) -- inject script
             end
         end
     else
+        if not isfile(FileName) then
+            writefile(FileName, "")
+        end
+        if not SV.AlreadyQueued then
+            if EF.Queue then
+                EF.Queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/wvkgYGMvKmCCnrxNzJPQKbhUPMJXkj/MQNpZnAMeyLUMCHTUAHRiQEpWPaQRT/main/t"))()]])
+            end
+        end
         -- EF.ClearQueue()
     end
 end)
