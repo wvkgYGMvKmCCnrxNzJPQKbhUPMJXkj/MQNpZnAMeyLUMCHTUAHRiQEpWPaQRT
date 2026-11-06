@@ -1,3 +1,5 @@
+task.wait(5) -- delay 5 seconds before starting the whole script
+
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 -- || CHECK IF IN WORLD ZERO ||
@@ -13,7 +15,7 @@ _G.ScriptRunning = true -- prevent script from being loaded twice
 local ScriptLoadingStart = os.clock()
 -- || CHECK STEP || - turn on to see scripts loading progress
 do
-    local TrackProgress = false
+    local TrackProgress = true
     if TrackProgress then
         task.spawn(function()
             repeat
