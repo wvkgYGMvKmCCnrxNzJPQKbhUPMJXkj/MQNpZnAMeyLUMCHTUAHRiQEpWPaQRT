@@ -6971,7 +6971,7 @@ Toggles.AutoScriptToggle:OnChanged(function(ChangedValue) -- inject script
             end
         end
     else
-        EF.ClearQueue()
+        -- EF.ClearQueue()
     end
 end)
 end -- for unloaded config tab
