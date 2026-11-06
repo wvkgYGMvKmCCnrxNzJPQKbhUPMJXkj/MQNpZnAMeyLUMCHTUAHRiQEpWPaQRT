@@ -1,8 +1,12 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-KillSwitch = true
-CleanUpScript(true)
-print("JDRS: script has been unloaded")
+if EF.Queue then
+    local FileName = "JDRS/AutoExecute"
+    if isfile(FileName) then
+        delfile(FileName)
+        EF.ClearQueue()
+    end
+end
 
 -- || CHECK IF IN WORLD ZERO ||
 if tostring(game.GameId) ~= "985731078" then -- set to string or obfuscation can mess it up
