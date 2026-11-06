@@ -3108,7 +3108,7 @@ Toggles = Library.Toggles
 SetGlobal("creating window")
 local Window = Library:CreateWindow({
     Title = "World Zero",
-    Footer = "Script made by: justdoingrandomstuff",
+    Footer = "Script made by: justdoingrandomstuff!",
     Icon = 17210785932,
     NotifySide = "Right",
     AutoShow = true,
