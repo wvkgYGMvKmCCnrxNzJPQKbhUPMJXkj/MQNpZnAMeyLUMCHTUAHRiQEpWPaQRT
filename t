@@ -18,7 +18,7 @@ do
         task.spawn(function()
             repeat
                 print(_G.ScriptStep)
-                task.wait(1)
+                task.wait(5)
             until _G.ScriptStep == "end"
             print("loaded everything")
         end)
