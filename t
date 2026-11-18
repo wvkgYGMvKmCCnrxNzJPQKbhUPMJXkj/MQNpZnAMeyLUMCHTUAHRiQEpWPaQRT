@@ -5553,7 +5553,9 @@ if IsDungeon then
                     end
                     while SV.Autofarm do
                         for Part, PartData in TeleportParts do
-                            if not SV.StopTeleportingParts then
+                            -- Do not advance the floor while the character is
+                            -- intentionally held away from the exit trigger.
+                            if not SV.StopTeleportingParts and not HoldForRealTime then
                                 if PartData.DontTeleport then
                                     continue
                                 end
@@ -6298,119 +6300,178 @@ if IsDungeon then
     local InfNotification
     local InfDelay
     local InfWait
-    local InfChanged
+    local InfToken = 0
+    local InfHold
+
+    local InfiniteTowerId = 38
+    local BaseInfDelay = 25
+    local MaxInfDelay = 300
+    local BossFloorMaxMobs = 10
+    local InfPollInterval = 0.05
+
+    local function IsUsable(Instance)
+        return Instance ~= nil and Instance.Parent ~= nil
+    end
+
+    local function ClearInfNotification()
+        if InfNotification then
+            InfNotification:Destroy()
+            InfNotification = nil
+        end
+    end
+
+    local function ReleaseInfHold()
+        local Hold = InfHold
+        InfHold = nil
+        if Hold and IsUsable(Hold.Root) then
+            Hold.Root.CFrame = CFrame.new(Hold.Position)
+            TeleportStandPart()
+        end
+    end
+
+    local function StopInfDelay()
+        InfWait = nil
+        InfToken += 1
+        ClearInfNotification()
+        ReleaseInfHold()
+        HoldForRealTime = false
+        DisconnectVariable("UpdateMobTracker")
+        DisconnectVariable("UpdateTowerFloor")
+    end
 
     Toggles.DelayInfFloorToggle:OnChanged(function(ChangedValue)
-        local TimeActivated = os.clock()
-        InfChanged = CheckForCharacter(TimeActivated)
-
-        if TimeActivated ~= InfChanged then
+        if not ChangedValue then
+            StopInfDelay()
             return
         end
 
-        if ChangedValue then
-            InfWait = true
-            InfDelay = InfDelay or 25
+        if ISV.MissionId ~= InfiniteTowerId then
+            Library:Notify("Delay inf floors only works in the Infinite Tower", 3)
+            return
+        end
 
-            local Success, Result = pcall(function()
-                if ISV.MissionId == 38 then
-                    local DungeonScript = ReplicatedStorage:WaitForChild(
-                        "MissionScripts",
-                        math.huge
-                    ):FindFirstChildWhichIsA("ModuleScript")
+        CheckForCharacter()
 
-                    if DungeonScript then
-                        local IsBossFloor = false
-                        local CurrentFloor = nil
+        -- Re-enabling while a hold is active must not stack listeners or
+        -- adopt the parked position as the next floor's return position.
+        ClearInfNotification()
+        ReleaseInfHold()
+        HoldForRealTime = false
+        DisconnectVariable("UpdateMobTracker")
+        DisconnectVariable("UpdateTowerFloor")
 
-                        ConnectionTable["UpdateMobTracker"] =
-                            DungeonScript:WaitForChild(
-                                "UpdateMobTracker",
-                                math.huge
-                            ).OnClientEvent:Connect(function(KilledMobs, TotalMobs)
+        InfWait = true
+        InfToken += 1
+        InfDelay = math.clamp(InfDelay or BaseInfDelay, 0, MaxInfDelay)
 
-                                -- Only classify floors with actual mobs.
-                                IsBossFloor = TotalMobs > 0 and TotalMobs < 10
+        local Success, Result = pcall(function()
+            local MissionScripts = ReplicatedStorage:WaitForChild("MissionScripts", math.huge)
+            local DungeonScript = MissionScripts:FindFirstChildWhichIsA("ModuleScript")
+            if not DungeonScript then
+                error("infinite tower mission script not found")
+            end
 
-                                -- Increase delay after all mobs are killed.
-                                if TotalMobs > 0 and KilledMobs >= TotalMobs then
-                                    InfDelay = InfDelay + SV.IncrementInfiniteDelay
-                                end
-                            end)
+            local Floor = { IsBoss = false, Cleared = false }
 
-                        ConnectionTable["UpdateTowerFloor"] =
-                            DungeonScript:WaitForChild(
-                                "UpdateTowerFloor",
-                                math.huge
-                            ).OnClientEvent:Connect(function(Floor)
-
-                                CurrentFloor = Floor
-                                IsBossFloor = false
-
-                                HoldForRealTime = true
-
-                                local PreviousPosition = PlayerRoot.Position
-
-                                local GuildWaitPosition = Vector3.new(
-                                    PreviousPosition.X + 25000,
-                                    PreviousPosition.Y + 25000,
-                                    PreviousPosition.Z
-                                )
-
-                                local InfNotification = Library:Notify(
-                                    "Delaying floor",
-                                    InfDelay
-                                )
-
-                                local StartTime = time() + InfDelay
-
-                                local ShouldReturn = false
-
-                                while InfWait and not KillSwitch do
-                                    if IsBossFloor or time() >= StartTime then
-                                        ShouldReturn = true
-                                        break
-                                    end
-
-                                    PlayerRoot.CFrame = CFrame.new(GuildWaitPosition)
-                                    TeleportStandPart()
-
-                                    task.wait(0.1)
-                                end
-
-                                -- Cleanup notification.
-                                if InfNotification then
-                                    InfNotification:Destroy()
-                                end
-
-                                HoldForRealTime = false
-
-                                -- Restore position only when the delay
-                                -- condition has actually been satisfied.
-                                if ShouldReturn and PlayerRoot then
-                                    PlayerRoot.CFrame = CFrame.new(PreviousPosition)
-                                    TeleportStandPart()
-                                end
-                            end)
+            ConnectionTable["UpdateMobTracker"] =
+                DungeonScript:WaitForChild(
+                    "UpdateMobTracker",
+                    math.huge
+                ).OnClientEvent:Connect(function(KilledMobs, TotalMobs)
+                    if not InfWait or TotalMobs <= 0 then
+                        return
                     end
-                end
-            end)
 
-            if not Success then
-                SaveErrorToFile("DELAY INF TOWER FLOORS", Result)
-            end
+                    -- Only classify floors with actual mobs.
+                    Floor.IsBoss = TotalMobs < BossFloorMaxMobs
 
-        else
-            if InfNotification then
-                InfNotification:Destroy()
-                InfNotification = nil
-            end
+                    -- Increase delay after all mobs are killed.
+                    if KilledMobs >= TotalMobs and not Floor.Cleared then
+                        Floor.Cleared = true
+                        InfDelay = math.min(
+                            InfDelay + (SV.IncrementInfiniteDelay or 0),
+                            MaxInfDelay
+                        )
+                    end
+                end)
 
-            InfWait = nil
-            HoldForRealTime = false
+            ConnectionTable["UpdateTowerFloor"] =
+                DungeonScript:WaitForChild(
+                    "UpdateTowerFloor",
+                    math.huge
+                ).OnClientEvent:Connect(function()
 
-            DisconnectVariable("UpdateMobTracker")
-            DisconnectVariable("UpdateTowerFloor")
+                    if not InfWait then
+                        return
+                    end
+
+                    InfToken += 1
+                    local MyToken = InfToken
+
+                    Floor.IsBoss = false
+                    Floor.Cleared = false
+
+                    local Root = PlayerRoot
+                    if not IsUsable(Root) then
+                        return
+                    end
+
+                    local PreviousPosition = Root.Position
+                    local GuildWaitPosition = PreviousPosition + Vector3.new(25000, 25000, 0)
+
+                    ClearInfNotification()
+                    InfHold = { Root = Root, Position = PreviousPosition }
+                    InfNotification = Library:Notify("Delaying floor", InfDelay)
+
+                    HoldForRealTime = true
+
+                    local StartTime = time() + InfDelay
+
+                    -- Errors inside an event callback are not caught by the
+                    -- outer pcall, so a failure here must never leave
+                    -- HoldForRealTime stuck true.
+                    local LoopOk, LoopErr = pcall(function()
+                        while InfWait and not KillSwitch and InfToken == MyToken do
+                            -- Leave as soon as the floor is cleared so the
+                            -- character moves to the next portal immediately.
+                            if Floor.Cleared or Floor.IsBoss or time() >= StartTime then
+                                break
+                            end
+
+                            if not IsUsable(Root) then
+                                break
+                            end
+
+                            Root.CFrame = CFrame.new(GuildWaitPosition)
+                            TeleportStandPart()
+
+                            task.wait(InfPollInterval)
+                        end
+                    end)
+
+                    if not LoopOk then
+                        SaveErrorToFile("DELAY INF TOWER FLOOR LOOP", LoopErr)
+                    end
+
+                    -- A newer floor event, or a toggle off, took ownership.
+                    if InfToken ~= MyToken then
+                        return
+                    end
+
+                    InfHold = nil
+                    ClearInfNotification()
+                    HoldForRealTime = false
+
+                    if IsUsable(Root) then
+                        Root.CFrame = CFrame.new(PreviousPosition)
+                        TeleportStandPart()
+                    end
+                end)
+        end)
+
+        if not Success then
+            StopInfDelay()
+            SaveErrorToFile("DELAY INF TOWER FLOORS", Result)
         end
     end)
     Toggles.GuildQuestToggle:OnChanged(function(ChangedValue) -- claim guild quests
